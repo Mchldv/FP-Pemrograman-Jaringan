@@ -1,6 +1,6 @@
 Pilihan Topik Final Project Pemrograman Jaringan Kelas C dan D
 Jadwal demo sesuai dengan jadwal EAS Jurusan Teknik Informatika
--------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
 
 [PROGJAR]
 [Membuat HTTP Server dan Klien]
@@ -16,6 +16,6 @@ Ketentuannya adalah mengimplementasikan RFC 2616 (dituliskan dengan subbab) seba
 ==============================================================================================
 - Menerapkan teknik multiclient dengan modul select DAN thread
 
+---------------------------------------------------------------------------------------------
 Ketentuan umum: semua source code FP diupload di dikerjakan di GitHub
-
 Jika ada pertanyaan silakan email ke studiawan@gmail.com
