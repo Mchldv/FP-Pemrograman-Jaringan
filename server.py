@@ -8,6 +8,18 @@ def client_request(sock):
     # receive data from client, break when null received          
     data = sock.recv(1024)
 
+    path = "."
+    file = ""
+    directory = ""
+
+    # List active directory
+    directoryList = os.listdir(path)
+
+    for d in directoryList:
+        print '{:50s}'.format(d),
+        # check if d is directory or file
+        print "=>  " + ("File" if os.path.isfile(os.path.join(path, d)) else "Directory")
+
     if data :
         print data                                  
                     
