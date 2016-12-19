@@ -92,7 +92,7 @@ class ThreadedServer(object):
         os.chdir(root + cur_dir)
         #        print os.getcwd()
 
-        if request_file == '/pages/' or request_file == '/pages' or request_file == '/dataset/a.html':
+        if '/pages/' in request_file or request_file == '/dataset/a.html':
                 not_found = 2
         elif cur_file_name == '':
             #            os.chdir(root+cur_dir)
@@ -180,7 +180,7 @@ class ThreadedServer(object):
         os.chdir(root + cur_dir)
         #        print os.getcwd()
 
-        if request_file == '/pages/' or request_file == '/pages' or request_file == '/dataset/a.html':
+        if '/pages/' in request_file or request_file == '/dataset/a.html':
                 not_found = 2
         elif cur_file_name == '':
             #            os.chdir(root+cur_dir)
