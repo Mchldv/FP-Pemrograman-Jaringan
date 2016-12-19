@@ -105,7 +105,5 @@ try:
     #client_socket.send('diterima')
     client_socket.close()
 except KeyboardInterrupt:
-
     client_socket.close()
-
     sys.exit(0)
