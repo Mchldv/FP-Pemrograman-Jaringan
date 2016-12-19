@@ -130,19 +130,8 @@ class ThreadedServer(object):
                 response_header = 'HTTP/1.1 200 OK\r\nContent-Type: media/html; charset=UTF-8\r\nContent-Length: ' + str(
                     content_length) + '\r\n' + 'File-Name: ' + cur_file_name + '\r\n\r\n'
         elif os.path.isdir(cur_file_name):
-            first = 1
-            response_data = ''
-            for name in os.listdir(cur_file_name):
-                path = os.path.join(cur_file_name, name)
-                add_content = '<p><a href="' + path + '">' + name + '</a></p>'
-                if (first == 1):
-                    response_data = add_content
-                    first = 0
-                else:
-                    response_data += add_content
-            content_length = len(response_data)
-            response_header = 'HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(
-                content_length) + '\r\n\r\n'
+            response_data = '0'
+            response_header = 'HTTP/1.1 301 MOVED PERMANENTLY\r\nContent-Type: text/html; charset=UTF-8\r\n' + 'Location: ' + request_file + cur_dir + '\r\nContent-Length: 0' + '\r\n\r\n'
         else:
             not_found = 1
         if (not_found == 1):
