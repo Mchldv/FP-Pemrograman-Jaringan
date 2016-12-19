@@ -57,22 +57,35 @@ class ThreadedServer(object):
                     print "head"
                     self.do_head(client_socket, request_file)
                 elif method == 'POST':
+                    print "post"
+                    content_length = request_header[2].split(': ')[1]
                     post_data = data.strip().split('\r\n\r\n')[1]
-                    self.do_post(client_socket, post_data)
+                    self.do_post(client_socket, post_data, content_length)
 
-    def do_post(self, client_socket, data):
-        # print data
+    def do_post(self, client_socket, data, content_length):
+        #print data
 
-        # not_found = 0
+        #print 'content_length = ' + content_length + '\n'
+        #print 'data keterima = ' + str(len(data)) + '\n'
+        #not_found = 0
 
-        message = 'Berhasil kirim ' + data
-        content_length = len(message)
-        response_header = 'HTTP/1.1 200 OK\r\nContent-Length: ' + str(content_length) + '\r\n\r\n'
-        client_socket.sendall(response_header + message);
-
-
-
-        # for a in
+        if content_length == str(len(data)):
+            message ='Data yang diterima: ' + data
+            content_length = len(message)
+            response_header = 'HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(content_length) + '\r\n\r\n'
+            
+        else:
+            #message ='Server Error'
+            #content_length = len(message)
+            os.chdir(root)
+            f = open('pages/500.html', 'r')
+            message = f.read()
+            f.close()
+            message = message + '\nPOST parameter is too long/Content-Length is wrong'
+            content_length = len(message)
+            response_header = 'HTTP/1.1 500 INTERNAL SERVER ERROR\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(content_length) + '\r\n\r\n'
+        
+        client_socket.sendall(response_header+message)
 
     def do_get(self, client_socket, request_file):
         print request_file
