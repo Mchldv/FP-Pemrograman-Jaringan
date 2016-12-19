@@ -92,7 +92,9 @@ class ThreadedServer(object):
         os.chdir(root + cur_dir)
         #        print os.getcwd()
 
-        if cur_file_name == '':
+        if request_file == '/pages/' or request_file == '/pages' or request_file == '/dataset/a.html':
+                    not_found = 2
+        elif cur_file_name == '':
             #            os.chdir(root+cur_dir)
             if 'index.html' in os.listdir(os.getcwd()):
                 f = open('index.html', 'r')
@@ -152,6 +154,13 @@ class ThreadedServer(object):
             content_length = len(response_data)
             response_header = 'HTTP/1.1 404 NOT FOUND\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(
                 content_length) + '\r\n\r\n'
+        elif(not_found == 2):
+                    os.chdir(root)
+                    f = open('pages/403.html','r')
+                    response_data = f.read()
+                    f.close()
+                    content_length = len(response_data)
+                    response_header = 'HTTP/1.1 403 FORBIDDEN\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: '+ str(content_length) + '\r\n\r\n'
 
         client_socket.sendall(response_header + response_data)
     
@@ -171,7 +180,9 @@ class ThreadedServer(object):
         os.chdir(root + cur_dir)
         #        print os.getcwd()
 
-        if cur_file_name == '':
+        if request_file == '/pages/' or request_file == '/pages' or request_file == '/dataset/a.html':
+                    not_found = 2
+        elif cur_file_name == '':
             #            os.chdir(root+cur_dir)
             if 'index.html' in os.listdir(os.getcwd()):
                 f = open('index.html', 'r')
@@ -231,6 +242,13 @@ class ThreadedServer(object):
             content_length = len(response_data)
             response_header = 'HTTP/1.1 404 NOT FOUND\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(
                 content_length) + '\r\n\r\n'
+        elif(not_found == 2):
+                    os.chdir(root)
+                    f = open('pages/403.html','r')
+                    response_data = f.read()
+                    f.close()
+                    content_length = len(response_data)
+                    response_header = 'HTTP/1.1 403 FORBIDDEN\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: '+ str(content_length) + '\r\n\r\n'
 
         client_socket.sendall(response_header)
 
