@@ -17,6 +17,7 @@ root = os.getcwd()
 class ThreadedServer(object):
     def __init__(self, host, port):
         self.host = '127.0.0.1'
+        #self.host = '10.151.43.221'
         serveraddr = (self.host, port)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -45,6 +46,8 @@ class ThreadedServer(object):
                 break
             else:
                 request_header = data.strip().split('\r\n')
+                #content_length = request_header[2].split(': ')[1]
+                #print content_length
                 request_file = request_header[0].split()[1]
                 method = request_header[0].split()[0]
 
@@ -55,7 +58,23 @@ class ThreadedServer(object):
                     print "head"
                     self.do_head(client_socket, request_file)
                 elif method == 'POST':
-                    do_post()
+                    post_data = data.strip().split('\r\n\r\n')[1]
+                    self.do_post(client_socket, post_data)
+                    
+
+    def do_post(self, client_socket, data):
+        #print data
+        
+        #not_found = 0
+
+        message ='Berhasil kirim ' + data
+        content_length = len(message)
+        response_header = 'HTTP/1.1 200 OK\r\nContent-Length: ' + str(content_length) + '\r\n\r\n'
+        client_socket.sendall(response_header+message);
+        
+        
+
+        #for a in 
 
     def do_get(self, client_socket, request_file):
         print request_file
@@ -214,6 +233,11 @@ class ThreadedServer(object):
                 content_length) + '\r\n\r\n'
 
         client_socket.sendall(response_header)
+
+
+    
+
+        
 
 
 if __name__ == "__main__":
