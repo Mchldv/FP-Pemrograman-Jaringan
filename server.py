@@ -51,9 +51,10 @@ class ThreadedServer(object):
                 if method == 'GET':
                     print "hear"
                     self.do_get(client_socket, request_file)
-                elif method is 'HEAD':
-                    do_head()
-                elif method is 'POST':
+                elif method == 'HEAD':
+                    print "head"
+                    self.do_head(client_socket, request_file)
+                elif method == 'POST':
                     do_post()
 
     def do_get(self, client_socket, request_file):
@@ -134,6 +135,85 @@ class ThreadedServer(object):
                 content_length) + '\r\n\r\n'
 
         client_socket.sendall(response_header + response_data)
+    
+    def do_head(self, client_socket, request_file):
+        print request_file
+        not_found = 0
+
+        cur_file_name = request_file.strip().split('/')[-1]
+        if cur_file_name == '':
+            cur_dir = request_file
+        else:
+            cur_dir = request_file[:-len(cur_file_name)]
+
+        print 'file_name : ' + cur_file_name
+        print 'cur_dir : ' + cur_dir
+
+        os.chdir(root + cur_dir)
+        #        print os.getcwd()
+
+        if cur_file_name == '':
+            #            os.chdir(root+cur_dir)
+            if 'index.html' in os.listdir(os.getcwd()):
+                f = open('index.html', 'r')
+                response_data = f.read()
+                f.close()
+
+                content_length = len(response_data)
+                response_header = 'HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(
+                    content_length) + '\r\n\r\n'
+            else:
+                first = 1
+                response_data = ''
+                for name in os.listdir(os.getcwd()):
+                    path = os.path.join(cur_file_name, name)
+                    add_content = '<a href="' + path + '"> \\' + name + '</a><br>'
+                    if (first == 1):
+                        response_data = add_content
+                        first = 0
+                    else:
+                        response_data += add_content
+                content_length = len(response_data)
+                response_header = 'HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(
+                    content_length) + '\r\n\r\n'
+        elif os.path.isfile(cur_file_name):
+            f = open(cur_file_name, 'rb')
+            response_data = f.read()
+            f.close()
+            content_length = len(response_data)
+            if (cur_file_name.split('.')[1] == 'html'):
+                response_header = 'HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(
+                    content_length) + '\r\n' + 'File-Name: ' + cur_file_name + '\r\n\r\n'
+            else:
+                response_header = 'HTTP/1.1 200 OK\r\nContent-Type: media/html; charset=UTF-8\r\nContent-Length: ' + str(
+                    content_length) + '\r\n' + 'File-Name: ' + cur_file_name + '\r\n\r\n'
+        elif os.path.isdir(cur_file_name):
+            first = 1
+            response_data = ''
+            for name in os.listdir(cur_file_name):
+                path = os.path.join(cur_file_name, name)
+                add_content = '<p><a href="' + path + '">' + name + '</a></p>'
+                if (first == 1):
+                    response_data = add_content
+                    first = 0
+                else:
+                    response_data += add_content
+            content_length = len(response_data)
+            response_header = 'HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(
+                content_length) + '\r\n\r\n'
+        else:
+            not_found = 1
+        if (not_found == 1):
+            os.chdir(root)
+            f = open('pages/404.html', 'r')
+            response_data = f.read()
+            f.close()
+
+            content_length = len(response_data)
+            response_header = 'HTTP/1.1 404 NOT FOUND\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(
+                content_length) + '\r\n\r\n'
+
+        client_socket.sendall(response_header)
 
 
 if __name__ == "__main__":
