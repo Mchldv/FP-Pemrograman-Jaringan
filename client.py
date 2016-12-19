@@ -1,51 +1,55 @@
-import socket               # Import socket module
+import socket
+import sys
+import os
 from bs4 import BeautifulSoup
 
-server_address = ('localhost', 80)
+fileport=open('httpserver.conf','r')
+port=fileport.read()
+fileport.close()
+
+print int(port)
+
+server_address = ('localhost', int(port))
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 client_socket.connect(server_address)
 
-#client_socket.send("Hello server!")
-client_request=raw_input('URI : localhost')
-request_header='GET '+client_request+' HTTP/1.1\r\nHost:localhost\r\n\r\n'
-client_socket.send(request_header)
-#print client_request
-response=''
+try:
+    while(1):
+        URN=raw_input("masukkan nama_file : ")
+        print URN
+        client_socket.send('GET '+URN+' HTTP/1.1\r\nHost: 10.181.1.149:'+port+'\r\n\r\n')
+        print 1;
+        header=''
+        while(True):
+            a=client_socket.recv(1)
+            #print a
+            header+=a
+            if '\r\n\r\n' in header:
+                break
+        print header
+        content_length=header.strip().split('\r\n')[2].split()[1]
+        #print content_length
+        cur_content_length=0
+        content=''
+        while(cur_content_length<int(content_length)):
+            content+=client_socket.recv(1)
+            cur_content_length+=1
+        #print content
+        if '200' in header and 'media' in header:
+            nama_file=header.strip().split('\r\n')[3].split()[1]
+            print nama_file
+            f=open(nama_file,"wb")
+            f.write(content)
+            f.close()
+        else:
+            soup=BeautifulSoup(content,"html.parser")
+            print soup.getText()
+    #client_socket.close()
+    #client_socket.send('diterima')
+    client_socket.close()
+except KeyboardInterrupt:
 
-while 1:
-    try:
-        #print 'masuk'
-        client_socket.settimeout(1)
-        recv=client_socket.recv(1024)
-        #print recv
-        #print 'dalam while'
-        if not recv or len(recv) == 0 :
-            break
-        response+=recv
-    except socket.timeout:
-        #more code
-        break
-    
-response_header = response.split('\r\n')[1]
-#print response_header + "\r\n"
-content_type = response_header.split()[1]
-#print content_type + "\r\n"
+    client_socket.close()
 
-if content_type == 'application/force-download' :
-    #fdfsdfsd
-    content_disposition=response.split('\r\n')[2]
-    filename=content_disposition.split('filename=')[1][1:-1]
-    #print filename + '\r\n'
-    f = open(filename,'wb+')
-    isi_file = response.split('\r\n\r\n')[1]
-    f.write(isi_file)
-    f.close()
-    print "Download Berhasil\r\n"
-else :
-    content = response.split('\r\n\r\n')[1]
-    soup=BeautifulSoup(content, 'html.parser')
-    isi_respon = soup. findAll('html')
-    #print isi_respon
-    for isi in isi_respon :
-        print isi.text.strip()
-client_socket.close                     # Close the socket when done
+    sys.exit(0)
