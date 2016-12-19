@@ -80,6 +80,26 @@ try:
             length=str(len(data))
             client_socket.sendall(method+" "+URN+' HTTP/1.1\r\nHost: localhost:'+port+'\r\nContent-Length: '+length+'\r\n\r\n'+data)
             do_post()
+        else:
+            method="FOOT"
+            client_socket.send(method+" "+URN+' HTTP/1.1\r\nHost: localhost:'+port+'\r\n\r\n')
+            header=''
+            while(True):
+                a=client_socket.recv(1)
+                header+=a
+                if '\r\n\r\n' in header:
+                    break
+            content_length=header.strip().split('\r\n')[2].split()[1]
+            #print content_length
+            cur_content_length=0
+            content=''
+            while(cur_content_length<int(content_length)):
+                content+=client_socket.recv(1)
+                cur_content_length+=1
+            print header+content
+            
+            
+            
         
     #client_socket.close()
     #client_socket.send('diterima')

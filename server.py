@@ -57,10 +57,20 @@ class ThreadedServer(object):
                     print "head"
                     self.do_head(client_socket, request_file)
                 elif method == 'POST':
-                    print "post"
+                    print "post\n\n"
                     content_length = request_header[2].split(': ')[1]
                     post_data = data.strip().split('\r\n\r\n')[1]
                     self.do_post(client_socket, post_data, content_length)
+                else:
+                    os.chdir(root)
+                    f = open('pages/500.html', 'r')
+                    message = f.read()
+                    f.close()
+                    #message = message + '\nPOST parameter is too long/Content-Length is wrong'
+                    content_length = len(message)
+                    response_header = 'HTTP/1.1 500 INTERNAL SERVER ERROR\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(content_length) + '\r\n\r\n'
+                    client_socket.sendall(response_header+message)
+                    
 
     def do_post(self, client_socket, data, content_length):
         #print data
@@ -81,7 +91,7 @@ class ThreadedServer(object):
             f = open('pages/500.html', 'r')
             message = f.read()
             f.close()
-            message = message + '\nPOST parameter is too long/Content-Length is wrong'
+            #message = message + '\nPOST parameter is too long/Content-Length is wrong'
             content_length = len(message)
             response_header = 'HTTP/1.1 500 INTERNAL SERVER ERROR\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(content_length) + '\r\n\r\n'
         
