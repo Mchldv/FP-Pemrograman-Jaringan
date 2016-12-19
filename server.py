@@ -17,7 +17,6 @@ root = os.getcwd()
 class ThreadedServer(object):
     def __init__(self, host, port):
         self.host = '127.0.0.1'
-        #self.host = '10.151.43.221'
         serveraddr = (self.host, port)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -46,8 +45,8 @@ class ThreadedServer(object):
                 break
             else:
                 request_header = data.strip().split('\r\n')
-                #content_length = request_header[2].split(': ')[1]
-                #print content_length
+                # content_length = request_header[2].split(': ')[1]
+                # print content_length
                 request_file = request_header[0].split()[1]
                 method = request_header[0].split()[0]
 
@@ -60,21 +59,20 @@ class ThreadedServer(object):
                 elif method == 'POST':
                     post_data = data.strip().split('\r\n\r\n')[1]
                     self.do_post(client_socket, post_data)
-                    
 
     def do_post(self, client_socket, data):
-        #print data
-        
-        #not_found = 0
+        # print data
 
-        message ='Berhasil kirim ' + data
+        # not_found = 0
+
+        message = 'Berhasil kirim ' + data
         content_length = len(message)
         response_header = 'HTTP/1.1 200 OK\r\nContent-Length: ' + str(content_length) + '\r\n\r\n'
-        client_socket.sendall(response_header+message);
-        
-        
+        client_socket.sendall(response_header + message);
 
-        #for a in 
+
+
+        # for a in
 
     def do_get(self, client_socket, request_file):
         print request_file
@@ -93,7 +91,7 @@ class ThreadedServer(object):
         #        print os.getcwd()
 
         if '/pages' in request_file or request_file == '/dataset/a.html':
-                not_found = 2
+            not_found = 2
         elif cur_file_name == '':
             #            os.chdir(root+cur_dir)
             if 'index.html' in os.listdir(os.getcwd()):
@@ -143,17 +141,19 @@ class ThreadedServer(object):
             content_length = len(response_data)
             response_header = 'HTTP/1.1 404 NOT FOUND\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(
                 content_length) + '\r\n\r\n'
-        elif(not_found == 2):
-                    os.chdir(root)
-                    f = open('pages/403.html','r')
-                    response_data = f.read()
-                    f.close()
-                    content_length = len(response_data)
-                    response_header = 'HTTP/1.1 403 FORBIDDEN\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: '+ str(content_length) + '\r\n\r\n'
+        elif (not_found == 2):
+            os.chdir(root)
+            f = open('pages/403.html', 'r')
+            response_data = f.read()
+            f.close()
+            content_length = len(response_data)
+            response_header = 'HTTP/1.1 403 FORBIDDEN\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(
+                content_length) + '\r\n\r\n'
 
         client_socket.sendall(response_header + response_data)
-    
+
     def do_head(self, client_socket, request_file):
+        global response_header, response_header
         print request_file
         not_found = 0
 
@@ -170,7 +170,7 @@ class ThreadedServer(object):
         #        print os.getcwd()
 
         if '/pages' in request_file or request_file == '/dataset/a.html':
-                not_found = 2
+            not_found = 2
         elif cur_file_name == '':
             #            os.chdir(root+cur_dir)
             if 'index.html' in os.listdir(os.getcwd()):
@@ -187,7 +187,7 @@ class ThreadedServer(object):
                 for name in os.listdir(os.getcwd()):
                     path = os.path.join(cur_file_name, name)
                     add_content = '<a href="' + path + '"> \\' + name + '</a><br>'
-                    if (first == 1):
+                    if first == 1:
                         response_data = add_content
                         first = 0
                     else:
@@ -200,7 +200,7 @@ class ThreadedServer(object):
             response_data = f.read()
             f.close()
             content_length = len(response_data)
-            if (cur_file_name.split('.')[1] == 'html'):
+            if cur_file_name.split('.')[1] == 'html':
                 response_header = 'HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(
                     content_length) + '\r\n' + 'File-Name: ' + cur_file_name + '\r\n\r\n'
             else:
@@ -222,7 +222,7 @@ class ThreadedServer(object):
                 content_length) + '\r\n\r\n'
         else:
             not_found = 1
-        if (not_found == 1):
+        if not_found == 1:
             os.chdir(root)
             f = open('pages/404.html', 'r')
             response_data = f.read()
@@ -231,20 +231,16 @@ class ThreadedServer(object):
             content_length = len(response_data)
             response_header = 'HTTP/1.1 404 NOT FOUND\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(
                 content_length) + '\r\n\r\n'
-        elif(not_found == 2):
-                    os.chdir(root)
-                    f = open('pages/403.html','r')
-                    response_data = f.read()
-                    f.close()
-                    content_length = len(response_data)
-                    response_header = 'HTTP/1.1 403 FORBIDDEN\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: '+ str(content_length) + '\r\n\r\n'
+        elif not_found == 2:
+            os.chdir(root)
+            f = open('pages/403.html', 'r')
+            response_data = f.read()
+            f.close()
+            content_length = len(response_data)
+            response_header = 'HTTP/1.1 403 FORBIDDEN\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(
+                content_length) + '\r\n\r\n'
 
         client_socket.sendall(response_header)
-
-
-    
-
-        
 
 
 if __name__ == "__main__":
