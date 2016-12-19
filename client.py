@@ -9,7 +9,7 @@ fileport.close()
 
 print int(port)
 
-server_address = ('10.151.43.221', int(port))
+server_address = ('127.0.0.1', int(port))
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 client_socket.connect(server_address)
@@ -50,7 +50,7 @@ def do_post():
         if '\r\n\r\n' in header:
             break
     print header
-    content_length=header.strip().split('\r\n')[1].split()[1]
+    content_length=header.strip().split('\r\n')[2].split()[1]
     #print content_length
     cur_content_length=0
     content=''
