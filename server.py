@@ -15,8 +15,8 @@ root = os.getcwd()
 
 
 class ThreadedServer(object):
-    def ReceiveData(self, client_socket, client_address):
-        while (True):
+    def receivedata(self, client_socket, client_address):
+        while True:
             try:
                 data = client_socket.recv(1024)
                 print data
@@ -45,39 +45,39 @@ class ThreadedServer(object):
                         f = open('pages/500.html', 'r')
                         message = f.read()
                         f.close()
-                        #message = message + '\nPOST parameter is too long/Content-Length is wrong'
+                        # message = message + '\nPOST parameter is too long/Content-Length is wrong'
                         content_length = len(message)
-                        response_header = 'HTTP/1.1 500 INTERNAL SERVER ERROR\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(content_length) + '\r\n\r\n'
-                        client_socket.sendall(response_header+message)
+                        response_header = 'HTTP/1.1 500 INTERNAL SERVER ERROR\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(
+                            content_length) + '\r\n\r\n'
+                        client_socket.sendall(response_header + message)
             except:
                 break
-         
-                    
 
     def do_post(self, client_socket, data, content_length):
-        #print data
-
-        #print 'content_length = ' + content_length + '\n'
-        #print 'data keterima = ' + str(len(data)) + '\n'
-        #not_found = 0
+        # print data
+        # print 'content_length = ' + content_length + '\n'
+        # print 'data_keterima = ' + str(len(data)) + '\n'
+        # not_found = 0
 
         if content_length == str(len(data)):
-            message ='Data yang diterima: ' + data
+            message = 'Data yang diterima: ' + data
             content_length = len(message)
-            response_header = 'HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(content_length) + '\r\n\r\n'
-            
+            response_header = 'HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(
+                content_length) + '\r\n\r\n'
+
         else:
-            #message ='Server Error'
-            #content_length = len(message)
+            # message ='Server Error'
+            # content_length = len(message)
             os.chdir(root)
             f = open('pages/500.html', 'r')
             message = f.read()
             f.close()
-            #message = message + '\nPOST parameter is too long/Content-Length is wrong'
+            # message = message + '\nPOST parameter is too long/Content-Length is wrong'
             content_length = len(message)
-            response_header = 'HTTP/1.1 500 INTERNAL SERVER ERROR\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(content_length) + '\r\n\r\n'
-        
-        client_socket.sendall(response_header+message)
+            response_header = 'HTTP/1.1 500 INTERNAL SERVER ERROR\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(
+                content_length) + '\r\n\r\n'
+
+        client_socket.sendall(response_header + message)
 
     def do_get(self, client_socket, request_file):
         print request_file
@@ -93,12 +93,12 @@ class ThreadedServer(object):
         print 'cur_dir : ' + cur_dir
 
         os.chdir(root + cur_dir)
-        #        print os.getcwd()
+        # print os.getcwd()
 
         if '/pages' in request_file or request_file == '/dataset/a.html':
             not_found = 2
         elif cur_file_name == '':
-            #            os.chdir(root+cur_dir)
+            # os.chdir(root+cur_dir)
             if 'index.html' in os.listdir(os.getcwd()):
                 f = open('index.html', 'r')
                 response_data = f.read()
@@ -113,7 +113,7 @@ class ThreadedServer(object):
                 for name in os.listdir(os.getcwd()):
                     path = os.path.join(cur_file_name, name)
                     add_content = '<a href="' + path + '"> \\' + name + '</a><br>'
-                    if (first == 1):
+                    if first == 1:
                         response_data = add_content
                         first = 0
                     else:
@@ -137,7 +137,7 @@ class ThreadedServer(object):
             response_header = 'HTTP/1.1 301 MOVED PERMANENTLY\r\nContent-Type: text/html; charset=UTF-8\r\n' + 'Location: ' + request_file + cur_dir + '\r\nContent-Length: 0' + '\r\n\r\n'
         else:
             not_found = 1
-        if (not_found == 1):
+        if not_found == 1:
             os.chdir(root)
             f = open('pages/404.html', 'r')
             response_data = f.read()
@@ -146,7 +146,7 @@ class ThreadedServer(object):
             content_length = len(response_data)
             response_header = 'HTTP/1.1 404 NOT FOUND\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' + str(
                 content_length) + '\r\n\r\n'
-        elif (not_found == 2):
+        elif not_found == 2:
             os.chdir(root)
             f = open('pages/403.html', 'r')
             response_data = f.read()
@@ -260,27 +260,27 @@ if __name__ == "__main__":
     server_sock.listen(5)
 
     input_socket = [server_sock]
-    try: 
+    try:
         while True:
             read_ready, write_ready, exception = select.select(input_socket, [], [])
-            
+
             for sock in read_ready:
                 server_sock.listen(5)
                 if sock == server_sock:
                     client_socket, client_address = server_sock.accept()
-                    #client_socket.settimeout(60)
-                    #ThreadedServer.ReceiveData(target = self.ReceiveData,args = (client_socket,client_address)).start()
+                    # client_socket.settimeout(60)
+                    # ThreadedServer.ReceiveData(target = self.ReceiveData,args = (client_socket,client_address)).start()
                     input_socket.append(client_socket)
-                    #print "server_socket:"+str(sock)
+                    # print "server_socket:"+str(sock)
                 else:
-                    t1 = threading.Thread(target=ThreadedServer().ReceiveData, args=(client_socket,client_address))
+                    t1 = threading.Thread(target=ThreadedServer().receivedata, args=(client_socket, client_address))
                     t1.start()
-##                    s= ThreadedServer()
-##                    s.ReceiveData(client_socket,client_address).start()
-                    #print "client_socket:"+str(sock)
+                    #
+                    # s= ThreadedServer()
+                    # s.ReceiveData(client_socket,client_address).start()
+                    # print "client_socket:"+str(sock)
 
-                    
+
     except KeyboardInterrupt:
         server_sock.close()
         sys.exit(0)
-    # 
